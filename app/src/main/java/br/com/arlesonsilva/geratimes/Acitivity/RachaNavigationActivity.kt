@@ -57,7 +57,7 @@ class RachaNavigationActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         database.use {
-            val cursor = rawQuery("SELECT * FROM tb_jogador WHERE racha_id = ?", arrayOf(idRacha.toString()))
+            val cursor = rawQuery("SELECT * FROM tb_jogador WHERE racha_id = ? AND pago = 'true' AND goleiro = 'false'", arrayOf(idRacha.toString()))
             if (cursor.count > 0) {
                 dialogZerarJogadorPago()
             } else {
