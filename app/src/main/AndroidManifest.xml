@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="br.com.arlesonsilva.geratimes">
+
+    <application
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            tools:ignore="GoogleAppIndexingWarning"
+            android:fullBackupContent="true">
+        <activity android:name=".Acitivity.SplashScreenActivity"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:label="@string/app_name"
+                  android:theme="@style/AppTheme.NoActionBar"
+                  tools:ignore="InnerclassSeparator">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".Acitivity.RachaActivity"
+                android:label="@string/app_name"
+                android:screenOrientation="portrait"
+                tools:ignore="InnerclassSeparator"/>
+        <activity
+                android:name=".Acitivity.RachaNavigationActivity"
+                android:label="@string/app_name"
+                android:parentActivityName=".Acitivity.RachaActivity"
+                android:screenOrientation="portrait"
+                tools:targetApi="jelly_bean"
+                tools:ignore="InnerclassSeparator"/>
+    </application>
+
+</manifest>
