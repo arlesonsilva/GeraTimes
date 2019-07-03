@@ -42,6 +42,7 @@ class SorteioFragment : Fragment() {
     private var racha: Racha? = null
     lateinit var empty: TextView
     private var idRacha: Int = 0
+    private var timeBola: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater.inflate(R.layout.fragment_sorteio, container, false)
@@ -62,8 +63,10 @@ class SorteioFragment : Fragment() {
                 selectJogadorConfirmadoDB()
             }
         }
-        selectRachaDB()
-        dateAtual()
+
+        //selectRachaDB()
+        //selectTimeBolaDB()
+        //dateAtual()
 
         btnSorteio!!.setOnClickListener {
             if (listConfirmado.size == 0 && listTimeSorteio.size == 0) {
@@ -94,21 +97,28 @@ class SorteioFragment : Fragment() {
         return view
     }
 
-    fun dialogSortearNovamente() {
-        val dialogBuilder = AlertDialog.Builder(view!!.context)
-        dialogBuilder.setTitle("Atenção")
-        dialogBuilder.setMessage("Deseja realizar o sorteio novamente?")
-        dialogBuilder.setPositiveButton("Sim") { _, _ ->
-            context!!.database.use { delete("tb_time",null,null) }
-            context!!.database.use { delete("tb_jogador_time",null,null) }
-            dialogSorteioTimes()
-        }
-        dialogBuilder.setNegativeButton("Não") { _, _ ->
-            return@setNegativeButton
-        }
-        val alertDialog = dialogBuilder.create()
-        alertDialog.show()
+    override fun onResume() {
+        super.onResume()
+        selectRachaDB()
+        selectTimeBolaDB()
+        dateAtual()
     }
+
+//    fun dialogSortearNovamente() {
+//        val dialogBuilder = AlertDialog.Builder(view!!.context)
+//        dialogBuilder.setTitle("Atenção")
+//        dialogBuilder.setMessage("Deseja realizar o sorteio novamente?")
+//        dialogBuilder.setPositiveButton("Sim") { _, _ ->
+//            context!!.database.use { delete("tb_time",null,null) }
+//            context!!.database.use { delete("tb_jogador_time",null,null) }
+//            dialogSorteioTimes()
+//        }
+//        dialogBuilder.setNegativeButton("Não") { _, _ ->
+//            return@setNegativeButton
+//        }
+//        val alertDialog = dialogBuilder.create()
+//        alertDialog.show()
+//    }
 
     fun dialogSorteioTimes() {
         val dialogBuilder = AlertDialog.Builder(view!!.context)
@@ -146,12 +156,22 @@ class SorteioFragment : Fragment() {
         var idTime: Long = 0
         val rand = Random()
         for (i in 1 .. numberOfGroups) {
-            context!!.database.use {
-                idTime = insert("tb_time",
-                    "nome" to "Time ${i}",
-                    "data" to dateAtual(),
-                    "racha_id" to idRacha
-                )
+            if (timeBola && i == 1) {
+                context!!.database.use {
+                    idTime = insert("tb_time",
+                        "nome" to "Time ${i} - Começa com a bola",
+                        "data" to dateAtual(),
+                        "racha_id" to idRacha
+                    )
+                }
+            }else {
+                context!!.database.use {
+                    idTime = insert("tb_time",
+                        "nome" to "Time ${i}",
+                        "data" to dateAtual(),
+                        "racha_id" to idRacha
+                    )
+                }
             }
             for (j in 0 until numberOfElements) {
                 if (list.count() > 0) {
@@ -175,6 +195,18 @@ class SorteioFragment : Fragment() {
                 "time_id" to idTime,
                 "racha_id" to idRacha
             )
+        }
+    }
+
+    private fun selectTimeBolaDB() {
+        context!!.database.use {
+            val cursor = rawQuery("SELECT * FROM tb_configuracao WHERE id = 2", null)
+            if (cursor.moveToFirst()) {
+                do {
+                    timeBola = cursor.getString(2)!!.toBoolean()
+                    Log.i("selectTimeBolaDB",cursor.getString(1) + timeBola)
+                } while (cursor.moveToNext())
+            }
         }
     }
 

@@ -3,8 +3,10 @@
     <string name="title_home">Rachas</string>
     <string name="title_jogadores">Jogadores</string>
     <string name="title_sorteio_times">Times</string>
+    <string name="title_configuracao">Configurações</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_compartilhar">Compartilhar</string>
+
+    <string name="action_settings">Configurações</string>
 </resources>

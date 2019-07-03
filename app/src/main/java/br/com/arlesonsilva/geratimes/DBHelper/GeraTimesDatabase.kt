@@ -11,7 +11,6 @@ val Context.database: DesospDatabase
 
 class DesospDatabase(context: Context) : ManagedSQLiteOpenHelper(ctx = context , name = "geraTimes.db",  version = 1) {
 
-    //singleton da classe
     companion object {
         private var instance: DesospDatabase? = null
 
@@ -26,7 +25,6 @@ class DesospDatabase(context: Context) : ManagedSQLiteOpenHelper(ctx = context ,
 
     override fun onCreate(db: SQLiteDatabase) {
 
-        // Criação de tabelas
         db.createTable("tb_racha",true,
             "id" to INTEGER + PRIMARY_KEY + UNIQUE,
             "nome" to TEXT,
@@ -54,6 +52,12 @@ class DesospDatabase(context: Context) : ManagedSQLiteOpenHelper(ctx = context ,
             "nome" to TEXT,
             "time_id" to INTEGER,
             "racha_id" to INTEGER
+        )
+
+        db.createTable("tb_configuracao",true,
+            "id" to INTEGER + PRIMARY_KEY + UNIQUE,
+            "item" to TEXT,
+            "ativo" to TEXT
         )
 
     }

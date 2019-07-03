@@ -37,6 +37,7 @@ class JogadoresFragment : Fragment() {
     private var adapter: JogadorAdapter? = null
     lateinit var empty: TextView
     private var idRacha: Int = 0
+    private var inclusao: Boolean = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -51,7 +52,8 @@ class JogadoresFragment : Fragment() {
         listView.adapter = adapter
         idRacha = arguments!!.getInt("idRacha")
 
-        selectJogadorDB()
+        //selectJogadorDB()
+        //selectInclusaoDB()
 
         val creator = SwipeMenuCreator { menu ->
             val editItem = SwipeMenuItem(
@@ -108,6 +110,12 @@ class JogadoresFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        selectJogadorDB()
+        selectInclusaoDB()
     }
 
     fun dialogAddJogador() {
@@ -201,6 +209,21 @@ class JogadoresFragment : Fragment() {
 
         toast("Jogador ${nome} inserido com sucesso")
         selectJogadorDB()
+        if (inclusao) {
+            dialogAddJogador()
+        }
+    }
+
+    private fun selectInclusaoDB() {
+        context!!.database.use {
+            val cursor = rawQuery("SELECT * FROM tb_configuracao WHERE id = 1", null)
+            if (cursor.moveToFirst()) {
+                do {
+                    inclusao = cursor.getString(2)!!.toBoolean()
+                    Log.i("selectInclusaoDB",cursor.getString(1) + inclusao)
+                } while (cursor.moveToNext())
+            }
+        }
     }
 
     fun verificaTodosPago() {

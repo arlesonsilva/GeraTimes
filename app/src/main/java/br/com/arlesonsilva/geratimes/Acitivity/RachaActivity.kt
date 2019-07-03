@@ -4,6 +4,9 @@ import android.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import br.com.arlesonsilva.geratimes.Adapter.RachaAdapter
@@ -20,6 +23,7 @@ class RachaActivity : AppCompatActivity() {
     private var listRacha = ArrayList<Racha>()
     private var adapter: RachaAdapter? = null
     lateinit var empty: TextView
+    private var inclusao: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,15 +34,35 @@ class RachaActivity : AppCompatActivity() {
         listView = findViewById(R.id.list_rachas)
         adapter = RachaAdapter(this@RachaActivity, listRacha)
 
-        selectRachaDB()
-
         btnAddRacha!!.setOnClickListener {
             dialogAddRacha()
         }
 
     }
 
-    fun selectRachaDB() {
+    override fun onResume() {
+        super.onResume()
+
+        selectRachaDB()
+        selectInclusaoDB()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.top_nav_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity<ConfiguracaoActivity>()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun selectRachaDB() {
         listRacha.clear()
         database.use {
             val cursor = rawQuery("SELECT * FROM tb_racha", null)
@@ -64,7 +88,19 @@ class RachaActivity : AppCompatActivity() {
         adapter!!.notifyDataSetChanged()
     }
 
-    fun insertRachaDB(nome: String, status: Boolean, numero: String) {
+    private fun selectInclusaoDB() {
+        database.use {
+            val cursor = rawQuery("SELECT * FROM tb_configuracao WHERE id = 1", null)
+            if (cursor.moveToFirst()) {
+                do {
+                    inclusao = cursor.getString(2)!!.toBoolean()
+                    Log.i("selectInclusaoDB",cursor.getString(1) + inclusao)
+                } while (cursor.moveToNext())
+            }
+        }
+    }
+
+    private fun insertRachaDB(nome: String, status: Boolean, numero: String) {
         database.use {
             insert("tb_racha",
                 "nome" to nome,
@@ -72,11 +108,14 @@ class RachaActivity : AppCompatActivity() {
                 "jogadores_por_time" to numero
             )
         }
-        toast("Racha ${nome} inserido com sucesso")
         selectRachaDB()
+        toast("Racha ${nome} inserido com sucesso")
+        if (inclusao) {
+            dialogAddRacha()
+        }
     }
 
-    fun dialogAddRacha() {
+    private fun dialogAddRacha() {
         val dialogBuilder = AlertDialog.Builder(this@RachaActivity)
         val inflater = this.layoutInflater
         val view = inflater.inflate(R.layout.add_racha_dialog, null)
