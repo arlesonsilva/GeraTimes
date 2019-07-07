@@ -3,6 +3,9 @@
           xmlns:tools="http://schemas.android.com/tools"
           package="br.com.arlesonsilva.geratimes">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <application
             android:allowBackup="true"
             android:fullBackupContent="true"
@@ -12,9 +15,23 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
+
+        <provider
+                android:name="android.support.v4.content.FileProvider"
+                android:authorities="br.com.arlesonsilva.geratimes.provider"
+                android:exported="false"
+                android:grantUriPermissions="true"
+                tools:ignore="WrongManifestParent">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths">
+            </meta-data>
+        </provider>
+
         <activity
                 android:name=".Acitivity.SplashScreenActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
+                android:screenOrientation="portrait"
                 android:label="@string/app_name"
                 android:theme="@style/AppTheme.NoActionBar"
                 tools:ignore="InnerclassSeparator">
@@ -29,6 +46,12 @@
                 android:label="@string/app_name"
                 android:screenOrientation="portrait"
                 tools:ignore="InnerclassSeparator"/>
+        <activity android:name=".Acitivity.MainActivity"
+                  android:label="@string/app_name"
+                  android:parentActivityName=".Acitivity.RachaActivity"
+                  android:screenOrientation="portrait"
+                  tools:ignore="InnerclassSeparator"
+                  tools:targetApi="jelly_bean"/>
         <activity
                 android:name=".Acitivity.RachaNavigationActivity"
                 android:label="@string/app_name"
@@ -36,9 +59,11 @@
                 android:screenOrientation="portrait"
                 tools:ignore="InnerclassSeparator"
                 tools:targetApi="jelly_bean"/>
-        <activity android:name=".Acitivity.ConfiguracaoActivity"
-                  android:label="@string/title_configuracao"
-                  android:screenOrientation="portrait"/>
+        <activity
+                android:name=".Acitivity.ConfiguracaoActivity"
+                android:label="@string/title_configuracao"
+                android:screenOrientation="portrait"
+                tools:ignore="InnerclassSeparator"/>
     </application>
 
 </manifest>

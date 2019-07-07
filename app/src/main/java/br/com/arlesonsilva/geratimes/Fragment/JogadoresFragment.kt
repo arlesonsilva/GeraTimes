@@ -253,7 +253,7 @@ class JogadoresFragment : Fragment() {
         context!!.database.use {
             update("tb_jogador",
                 "pago" to status.toString())
-                //.whereSimple()
+                .whereSimple("goleiro != 'true'" )
                 .exec()
         }
     }

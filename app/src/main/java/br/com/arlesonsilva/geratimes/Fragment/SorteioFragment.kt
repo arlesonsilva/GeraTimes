@@ -20,17 +20,18 @@ import br.com.arlesonsilva.geratimes.Model.JogadorTime
 import br.com.arlesonsilva.geratimes.Model.Racha
 import br.com.arlesonsilva.geratimes.Model.Time
 import br.com.arlesonsilva.geratimes.R
+import br.com.arlesonsilva.geratimes.Utils.DateTimeUtils
 import br.com.hapvida.desospofflinehap.DBHelper.database
 import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.ceil
 
 class SorteioFragment : Fragment() {
 
+    private var dateAtual: String? = null
     private var btnSorteio: FloatingActionButton? = null
     private var btnShare: FloatingActionButton? = null
     private lateinit var listView: ListView
@@ -54,6 +55,7 @@ class SorteioFragment : Fragment() {
         btnSorteio = view.findViewById<FloatingActionButton>(R.id.btn_sorteio)
         btnShare = view.findViewById<FloatingActionButton>(R.id.btn_share)
         idRacha = arguments!!.getInt("idRacha")
+        dateAtual = DateTimeUtils().dateAtual()
 
         context!!.database.use {
             val cursor = rawQuery("SELECT * FROM tb_time WHERE racha_id = ?", arrayOf(idRacha.toString()))
@@ -63,10 +65,6 @@ class SorteioFragment : Fragment() {
                 selectJogadorConfirmadoDB()
             }
         }
-
-        //selectRachaDB()
-        //selectTimeBolaDB()
-        //dateAtual()
 
         btnSorteio!!.setOnClickListener {
             if (listConfirmado.size == 0 && listTimeSorteio.size == 0) {
@@ -80,7 +78,7 @@ class SorteioFragment : Fragment() {
         }
 
         btnShare!!.setOnClickListener{
-            var message = "Sorteio de time(s) do racha ${racha!!.nome} realizado no dia ${dateAtual()} \n"
+            var message = "Sorteio de time(s) do racha ${racha!!.nome} realizado no dia ${dateAtual} \n"
             for (t in listTimeSorteio) {
                 message = message + "\n" + t.nome
                 for (j in t.jogador) {
@@ -101,7 +99,6 @@ class SorteioFragment : Fragment() {
         super.onResume()
         selectRachaDB()
         selectTimeBolaDB()
-        dateAtual()
     }
 
 //    fun dialogSortearNovamente() {
@@ -160,7 +157,7 @@ class SorteioFragment : Fragment() {
                 context!!.database.use {
                     idTime = insert("tb_time",
                         "nome" to "Time ${i} - Começa com a bola",
-                        "data" to dateAtual(),
+                        "data" to dateAtual,
                         "racha_id" to idRacha
                     )
                 }
@@ -168,7 +165,7 @@ class SorteioFragment : Fragment() {
                 context!!.database.use {
                     idTime = insert("tb_time",
                         "nome" to "Time ${i}",
-                        "data" to dateAtual(),
+                        "data" to dateAtual,
                         "racha_id" to idRacha
                     )
                 }
@@ -307,12 +304,6 @@ class SorteioFragment : Fragment() {
         btnSorteio!!.visibility = View.VISIBLE
         listView.adapter = adapter
         adapter!!.notifyDataSetChanged()
-    }
-
-    fun dateAtual(): String? {
-        val sdf = SimpleDateFormat("dd/MM/yyyy")
-        val currentDate = sdf.format(Date())
-        return currentDate
     }
 
 }

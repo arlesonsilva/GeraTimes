@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
+import br.com.arlesonsilva.geratimes.Fragment.EmpateFragment
 import br.com.arlesonsilva.geratimes.Fragment.JogadoresFragment
 import br.com.arlesonsilva.geratimes.Fragment.SorteioFragment
 import br.com.arlesonsilva.geratimes.Model.Racha
@@ -49,6 +50,10 @@ class RachaNavigationActivity : AppCompatActivity() {
             }
             R.id.navigation_soteio_times -> {
                 callFragment(SorteioFragment())
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.navigation_empate_times -> {
+                callFragment(EmpateFragment())
                 return@OnNavigationItemSelectedListener true
             }
         }

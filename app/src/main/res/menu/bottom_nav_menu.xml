@@ -11,4 +11,9 @@
             android:icon="@drawable/ic_group_black_24dp"
             android:title="@string/title_sorteio_times"/>
 
+    <item
+            android:id="@+id/navigation_empate_times"
+            android:icon="@drawable/ic_compare_black_24dp"
+            android:title="@string/title_empate_times"/>
+
 </menu>
