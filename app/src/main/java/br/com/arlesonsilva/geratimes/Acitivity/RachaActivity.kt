@@ -1,9 +1,16 @@
 package br.com.arlesonsilva.geratimes.Acitivity
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.ActivityCompat
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -24,6 +31,7 @@ class RachaActivity : AppCompatActivity() {
     private var adapter: RachaAdapter? = null
     lateinit var empty: TextView
     private var inclusao: Boolean = false
+    private val PERMISSION_RESULT_CODE = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +46,7 @@ class RachaActivity : AppCompatActivity() {
             dialogAddRacha()
         }
 
+        checkPermissions()
     }
 
     override fun onResume() {
@@ -45,6 +54,31 @@ class RachaActivity : AppCompatActivity() {
 
         selectRachaDB()
         selectInclusaoDB()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSION_RESULT_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults.first() == PackageManager.PERMISSION_GRANTED) {
+                    // Permissão foi concedida, já é possível usufruir da funcionalidade
+                } else if (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        !shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        !shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    } else {
+                        TODO("VERSION.SDK_INT < M")
+                        return
+                    }
+                ) {
+                    // Usuário marcou a caixa "não perguntar novamente"
+                    // Mostrar uma dialog explicando a importância do app ter acesso a funcionalidade
+                    showAlertConfig()
+                } else {
+                    // Usuário negou acesso à permissão
+                    // Bloquear trecho que utilizava a funcionalidade ou informar o usuário da necessidade de ter acesso à funcionalidade
+                    showAlertPermission()
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -60,6 +94,48 @@ class RachaActivity : AppCompatActivity() {
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun checkPermissions() {
+        ActivityCompat.requestPermissions(
+            this@RachaActivity,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            PERMISSION_RESULT_CODE)
+    }
+
+    private fun showAlertPermission() {
+        AlertDialog.Builder(this@RachaActivity).apply {
+            setTitle("Precisa de permissão")
+            setMessage("Algumas permissões são necessárias para executar tarefas no app Gera Times.")
+            setPositiveButton("Sim") { d, i ->
+                // Se o usuário quiser, requere novamente permissão à funcionalidade
+                ActivityCompat.requestPermissions(
+                    this@RachaActivity,
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ),
+                    PERMISSION_RESULT_CODE
+                )
+            }
+            setNegativeButton("Não") { d, i -> d.dismiss() }
+        }.show()
+    }
+
+    private fun showAlertConfig() {
+        AlertDialog.Builder(this).apply {
+            setTitle("Precisa de permissão")
+            setMessage("Algumas permissões são necessárias para executar tarefas no app Gera Times, é preciso que acesse as configurações do sistema e conceda as permissões necessárias.")
+            setPositiveButton("Ir para as configurações") { d, i ->
+                // Cria intent para a tela de detalhes do app onde é possível o usuário conceder permissão à funcionalidade
+                val appSettings = Intent().apply {
+                    action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    data = Uri.fromParts("package", this@RachaActivity.packageName, null)
+                }
+                context.startActivity(appSettings)
+            }
+            setNegativeButton("Não") { d, i -> d.dismiss() }
+        }.show()
     }
 
     private fun selectRachaDB() {
@@ -109,9 +185,10 @@ class RachaActivity : AppCompatActivity() {
             )
         }
         selectRachaDB()
-        toast("Racha ${nome} inserido com sucesso")
         if (inclusao) {
             dialogAddRacha()
+        }else {
+            toast("Racha ${nome} inserido com sucesso")
         }
     }
 

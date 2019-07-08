@@ -53,7 +53,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/spn_time2"/>
 
         <TextView
-                android:text="Escolha os times que estavam jogando na última partida e em caso de empate decida por meio de um sorteio de cara ou coroa quem vence esta partida"
+                android:text="Escolha os times que estavam jogando na última partida e em caso de empate decida por meio de um sorteio de cara ou coroa para saber quem vence esta partida"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/textView2"

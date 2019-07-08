@@ -3,7 +3,7 @@
     <string name="title_home">Rachas</string>
     <string name="title_jogadores">Jogadores</string>
     <string name="title_sorteio_times">Times</string>
-    <string name="title_empate_times">Empate</string>
+    <string name="title_empate_times">Empates</string>
     <string name="title_configuracao">Configurações</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -17,9 +17,13 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/txtContador"
-                android:layout_marginRight="8dp" android:layout_marginEnd="8dp" android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/switchPagoTodos" android:layout_marginTop="8dp"/>
+                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/switchPagoTodos"
+                android:layout_marginTop="8dp"/>
 
         <android.support.design.widget.FloatingActionButton
                 android:src="@drawable/ic_add_black_24dp"
@@ -72,10 +76,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/switchPagoTodos"
-                app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp" android:textOn="true" android:textOff="false"
-                android:textColor="@android:color/darker_gray" android:visibility="visible"/>
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:textOn="true"
+                android:textOff="false"
+                android:textColor="@android:color/darker_gray"
+                android:visibility="visible"
+                android:checked="false"/>
 
     </android.support.constraint.ConstraintLayout>
 

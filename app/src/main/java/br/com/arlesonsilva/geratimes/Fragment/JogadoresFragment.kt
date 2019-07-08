@@ -52,9 +52,6 @@ class JogadoresFragment : Fragment() {
         listView.adapter = adapter
         idRacha = arguments!!.getInt("idRacha")
 
-        //selectJogadorDB()
-        //selectInclusaoDB()
-
         val creator = SwipeMenuCreator { menu ->
             val editItem = SwipeMenuItem(
                 view.context
@@ -88,7 +85,7 @@ class JogadoresFragment : Fragment() {
         listView.setMenuCreator(creator)
 
         listView.setOnMenuItemClickListener { position, menu, index ->
-            var jogador = listJogador[position]
+            val jogador = listJogador[position]
             when (index) {
                 0 -> {
                     dialogEditarJogador(jogador)
@@ -100,7 +97,7 @@ class JogadoresFragment : Fragment() {
             false
         }
 
-        switch!!.onCheckedChange { buttonView, isChecked ->
+        switch!!.setOnCheckedChangeListener { buttonView, isChecked ->
             updateTodosPagoDB(switch!!.isChecked)
             selectJogadorDB()
         }
@@ -119,18 +116,15 @@ class JogadoresFragment : Fragment() {
     }
 
     fun dialogAddJogador() {
-
         val dialogBuilder = AlertDialog.Builder(context)
         val inflater = this.layoutInflater
         val view = inflater.inflate(R.layout.add_jogador_dialog, null)
         val nome = view.findViewById<EditText>(R.id.edtNome)
         val pago = view.findViewById<Switch>(R.id.swtPago)
         val goleiro = view.findViewById<Switch>(R.id.swtGoleiro)
-
         goleiro.onCheckedChange { buttonView, isChecked ->
             pago.isChecked = goleiro.isChecked
         }
-
         dialogBuilder.setTitle("Adicionar jogador")
         dialogBuilder.setView(view)
         dialogBuilder.setPositiveButton("Salvar") { _, _ ->
@@ -142,34 +136,29 @@ class JogadoresFragment : Fragment() {
                     pago.isChecked,
                     goleiro.isChecked
                 )
+                Log.i("insertJogadorDB",pago.isChecked.toString())
             }
         }
-
         dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
             return@setNegativeButton
         }
-
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
     }
 
     fun dialogEditarJogador(jogador: Jogador) {
-
         val dialogBuilder = AlertDialog.Builder(context)
         val inflater = this.layoutInflater
         val view = inflater.inflate(R.layout.add_jogador_dialog, null)
         val nome = view.findViewById<EditText>(R.id.edtNome)
         val pago = view.findViewById<Switch>(R.id.swtPago)
         val goleiro = view.findViewById<Switch>(R.id.swtGoleiro)
-
         nome.setText(jogador.nome)
         pago.isChecked = jogador.pago
         goleiro.isChecked = jogador.goleiro
-
         goleiro.onCheckedChange { buttonView, isChecked ->
             pago.isChecked = goleiro.isChecked
         }
-
         dialogBuilder.setTitle("Editar jogador")
         dialogBuilder.setView(view)
         dialogBuilder.setPositiveButton("Salvar") { _, _ ->
@@ -187,17 +176,14 @@ class JogadoresFragment : Fragment() {
                 updateJogadorDB(jogador)
             }
         }
-
         dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
             return@setNegativeButton
         }
-
         val alertDialog = dialogBuilder.create()
         alertDialog.show()
     }
 
     fun insertJogadorDB(nome: String, pago: Boolean, goleiro: Boolean) {
-
         context!!.database.use {
             insert("tb_jogador",
                 "nome" to nome,
@@ -206,11 +192,11 @@ class JogadoresFragment : Fragment() {
                 "racha_id" to idRacha
             )
         }
-
-        toast("Jogador ${nome} inserido com sucesso")
         selectJogadorDB()
         if (inclusao) {
             dialogAddJogador()
+        }else {
+            toast("Jogador ${nome} inserido com sucesso")
         }
     }
 
@@ -220,7 +206,6 @@ class JogadoresFragment : Fragment() {
             if (cursor.moveToFirst()) {
                 do {
                     inclusao = cursor.getString(2)!!.toBoolean()
-                    Log.i("selectInclusaoDB",cursor.getString(1) + inclusao)
                 } while (cursor.moveToNext())
             }
         }
@@ -228,8 +213,28 @@ class JogadoresFragment : Fragment() {
 
     fun verificaTodosPago() {
         context!!.database.use {
-            val cursor = rawQuery("SELECT * FROM tb_jogador WHERE racha_id = ? AND pago = 'false' AND goleiro = 'false'", arrayOf(idRacha.toString()))
-            switch!!.isChecked = cursor.count <= 0
+            val cursor = rawQuery("SELECT count(*) FROM tb_jogador WHERE racha_id = ? AND goleiro = 'false'", arrayOf(idRacha.toString()))
+            if (cursor.moveToFirst()) {
+                do {
+                    val nJogadores = cursor.getInt(0)
+                    //Log.i("verificaTodosPago",nJogadores.toString())
+                    val cursor2 = rawQuery("SELECT count(*) FROM tb_jogador WHERE racha_id = ? AND pago = 'true' AND goleiro = 'false'", arrayOf(idRacha.toString()))
+                    if (cursor2.moveToFirst()) {
+                        do {
+                            val nJogadoresPG = cursor2.getInt(0)
+                            Log.i("verificaTodosPago","${nJogadores} - ${nJogadoresPG}")
+                            if (nJogadores == nJogadoresPG) {
+                                switch!!.isChecked = true
+                            }
+                        } while (cursor2.moveToNext())
+                    }else {
+                        //switch!!.isEnabled = false
+                        switch!!.isChecked = false
+                        //switch!!.isEnabled = true
+                    }
+                    cursor2.close()
+                } while (cursor.moveToNext())
+            }
             cursor.close()
         }
     }
@@ -250,6 +255,7 @@ class JogadoresFragment : Fragment() {
     }
 
     fun updateTodosPagoDB(status: Boolean) {
+        Log.i("updateTodosPagoDB","2")
         context!!.database.use {
             update("tb_jogador",
                 "pago" to status.toString())
@@ -289,8 +295,8 @@ class JogadoresFragment : Fragment() {
             cursor.close()
         }
 
-        verificaTodosPago()
         selectCountJogadorPagoDB()
+        verificaTodosPago()
         listView.adapter = adapter
         adapter!!.notifyDataSetChanged()
     }
