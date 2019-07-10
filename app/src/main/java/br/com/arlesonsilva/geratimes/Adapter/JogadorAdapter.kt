@@ -11,10 +11,10 @@ import android.widget.BaseAdapter
 import android.widget.Switch
 import android.widget.TextView
 import br.com.arlesonsilva.geratimes.Acitivity.RachaNavigationActivity
+import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Fragment.JogadoresFragment
 import br.com.arlesonsilva.geratimes.Model.Jogador
 import br.com.arlesonsilva.geratimes.R
-import br.com.hapvida.desospofflinehap.DBHelper.database
 import org.jetbrains.anko.db.update
 import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
 

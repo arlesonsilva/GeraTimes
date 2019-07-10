@@ -7,8 +7,8 @@ import android.view.Menu
 import br.com.arlesonsilva.geratimes.R
 import android.view.MenuItem
 import android.widget.CheckBox
+import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Model.Configuracao
-import br.com.hapvida.desospofflinehap.DBHelper.database
 import org.jetbrains.anko.db.*
 import org.jetbrains.anko.toast
 
@@ -24,7 +24,7 @@ class ConfiguracaoActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        createTableConfig()
+        //createTableConfig()
 
         inclusao = findViewById(R.id.check_inclusao)
         timeA = findViewById(R.id.check_timeA)
@@ -81,17 +81,6 @@ class ConfiguracaoActivity : AppCompatActivity() {
                 timeA!!.isChecked
             )
         )
-    }
-
-    private fun createTableConfig() {
-        database.use {
-            createTable(
-                "tb_configuracao", true,
-                "id" to INTEGER + PRIMARY_KEY + UNIQUE,
-                "item" to TEXT,
-                "ativo" to TEXT
-            )
-        }
     }
 
     private fun selectConfiguracoes() {

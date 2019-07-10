@@ -17,11 +17,11 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import br.com.arlesonsilva.geratimes.Adapter.RachaAdapter
+import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Model.Racha
 import br.com.arlesonsilva.geratimes.R
-import br.com.hapvida.desospofflinehap.DBHelper.database
-import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.*
+import org.jetbrains.anko.db.*
 
 class RachaActivity : AppCompatActivity() {
 
@@ -46,6 +46,7 @@ class RachaActivity : AppCompatActivity() {
             dialogAddRacha()
         }
 
+        createTableConfig()
         checkPermissions()
     }
 
@@ -173,6 +174,17 @@ class RachaActivity : AppCompatActivity() {
                     Log.i("selectInclusaoDB",cursor.getString(1) + inclusao)
                 } while (cursor.moveToNext())
             }
+        }
+    }
+
+    private fun createTableConfig() {
+        database.use {
+            createTable(
+                "tb_configuracao", true,
+                "id" to INTEGER + PRIMARY_KEY + UNIQUE,
+                "item" to TEXT,
+                "ativo" to TEXT
+            )
         }
     }
 

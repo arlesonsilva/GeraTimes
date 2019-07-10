@@ -15,9 +15,9 @@ import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
 import br.com.arlesonsilva.geratimes.Adapter.JogadorAdapter
+import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Model.Jogador
 import br.com.arlesonsilva.geratimes.R
-import br.com.hapvida.desospofflinehap.DBHelper.database
 import com.baoyz.swipemenulistview.SwipeMenuCreator
 import com.baoyz.swipemenulistview.SwipeMenuItem
 import com.baoyz.swipemenulistview.SwipeMenuListView
@@ -217,20 +217,16 @@ class JogadoresFragment : Fragment() {
             if (cursor.moveToFirst()) {
                 do {
                     val nJogadores = cursor.getInt(0)
-                    //Log.i("verificaTodosPago",nJogadores.toString())
                     val cursor2 = rawQuery("SELECT count(*) FROM tb_jogador WHERE racha_id = ? AND pago = 'true' AND goleiro = 'false'", arrayOf(idRacha.toString()))
                     if (cursor2.moveToFirst()) {
                         do {
                             val nJogadoresPG = cursor2.getInt(0)
-                            Log.i("verificaTodosPago","${nJogadores} - ${nJogadoresPG}")
                             if (nJogadores == nJogadoresPG) {
                                 switch!!.isChecked = true
                             }
                         } while (cursor2.moveToNext())
                     }else {
-                        //switch!!.isEnabled = false
                         switch!!.isChecked = false
-                        //switch!!.isEnabled = true
                     }
                     cursor2.close()
                 } while (cursor.moveToNext())

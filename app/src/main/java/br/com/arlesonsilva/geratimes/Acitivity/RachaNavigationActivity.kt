@@ -7,12 +7,12 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
+import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Fragment.EmpateFragment
 import br.com.arlesonsilva.geratimes.Fragment.JogadoresFragment
 import br.com.arlesonsilva.geratimes.Fragment.SorteioFragment
 import br.com.arlesonsilva.geratimes.Model.Racha
 import br.com.arlesonsilva.geratimes.R
-import br.com.hapvida.desospofflinehap.DBHelper.database
 import org.jetbrains.anko.db.update
 
 class RachaNavigationActivity : AppCompatActivity() {

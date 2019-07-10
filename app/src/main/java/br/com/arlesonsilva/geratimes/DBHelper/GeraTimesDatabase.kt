@@ -1,23 +1,22 @@
-package br.com.hapvida.desospofflinehap.DBHelper
+package br.com.arlesonsilva.geratimes.DBHelper
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import org.jetbrains.anko.db.*
-import java.sql.Date
 
-val Context.database: DesospDatabase
-    get() = DesospDatabase.getInstance(applicationContext)
+val Context.database: GeraTimesDatabase
+    get() = GeraTimesDatabase.getInstance(applicationContext)
 
 
-class DesospDatabase(context: Context) : ManagedSQLiteOpenHelper(ctx = context , name = "geraTimes.db",  version = 1) {
+class GeraTimesDatabase(context: Context) : ManagedSQLiteOpenHelper(ctx = context , name = "geraTimes.db",  version = 1) {
 
     companion object {
-        private var instance: DesospDatabase? = null
+        private var instance: GeraTimesDatabase? = null
 
         @Synchronized
-        fun getInstance(ctx: Context): DesospDatabase {
+        fun getInstance(ctx: Context): GeraTimesDatabase {
             if (instance == null) {
-                instance = DesospDatabase(ctx.applicationContext)
+                instance = GeraTimesDatabase(ctx.applicationContext)
             }
             return instance!!
         }

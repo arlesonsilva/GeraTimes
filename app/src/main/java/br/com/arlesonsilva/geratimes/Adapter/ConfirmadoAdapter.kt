@@ -8,10 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.R
-import br.com.hapvida.desospofflinehap.DBHelper.database
 import org.jetbrains.anko.db.update
-import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
 
 class ConfirmadoAdapter (private val context: Context, private val dataSource: ArrayList<Confirmado>): BaseAdapter() {
 

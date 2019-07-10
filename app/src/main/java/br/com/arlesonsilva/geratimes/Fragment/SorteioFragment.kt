@@ -15,13 +15,13 @@ import android.widget.ListView
 import android.widget.TextView
 import br.com.arlesonsilva.geratimes.Adapter.ConfirmadoAdapter
 import br.com.arlesonsilva.geratimes.Adapter.JogadorTimeAdapter
+import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Model.Confirmado
 import br.com.arlesonsilva.geratimes.Model.JogadorTime
 import br.com.arlesonsilva.geratimes.Model.Racha
 import br.com.arlesonsilva.geratimes.Model.Time
 import br.com.arlesonsilva.geratimes.R
 import br.com.arlesonsilva.geratimes.Utils.DateTimeUtils
-import br.com.hapvida.desospofflinehap.DBHelper.database
 import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.support.v4.toast
 import org.jetbrains.anko.toast

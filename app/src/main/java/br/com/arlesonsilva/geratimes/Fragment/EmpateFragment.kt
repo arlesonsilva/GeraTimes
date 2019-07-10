@@ -13,11 +13,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Model.Racha
 import br.com.arlesonsilva.geratimes.R
 import br.com.arlesonsilva.geratimes.Utils.DateTimeUtils
 import br.com.arlesonsilva.geratimes.Utils.ScreenshotUtils
-import br.com.hapvida.desospofflinehap.DBHelper.database
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
 import org.jetbrains.anko.support.v4.alert
