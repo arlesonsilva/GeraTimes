@@ -15,10 +15,9 @@
             app:layout_constraintEnd_toStartOf="@+id/pago"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:textSize="18sp"/>
+            android:textSize="18sp" android:text="Nome"/>
 
     <Switch
             android:layout_width="wrap_content"
@@ -50,5 +49,32 @@
             app:layout_constraintTop_toTopOf="parent"
             android:tint="@android:color/darker_gray"
             android:contentDescription="seta indicatica de continuidade para direita"/>
+    <TextView
+            android:text="Horário"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/horario"
+            app:layout_constraintTop_toBottomOf="@+id/nome" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="8dp" android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"
+    />
+    <TextView
+            android:text="Dia da semana"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/dSemana"
+            app:layout_constraintTop_toBottomOf="@+id/nome"
+            app:layout_constraintEnd_toStartOf="@+id/pago" android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp" app:layout_constraintStart_toEndOf="@+id/textView5"
+            android:layout_marginLeft="5dp" android:layout_marginStart="5dp"/>
+    <TextView
+            android:text="-"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView5"
+            app:layout_constraintTop_toBottomOf="@+id/nome"
+            app:layout_constraintStart_toEndOf="@+id/horario" android:gravity="center" android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"/>
 
 </android.support.constraint.ConstraintLayout>

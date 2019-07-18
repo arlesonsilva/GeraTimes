@@ -1,16 +1,13 @@
 <resources>
     <string name="app_name">Gera Times</string>
-    <string name="title_home">Rachas</string>
+    <!--<string name="title_home">Rachas</string>-->
     <string name="title_jogadores">Jogadores</string>
     <string name="title_sorteio_times">Times</string>
     <string name="title_empate_times">Empates</string>
     <string name="title_configuracao">Configurações</string>
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_compartilhar">Compartilhar</string>
-
     <string name="action_settings">Configurações</string>
-
     <string name="sharing_text">Your sharing text goes here…</string>
     <string name="share_title">Compartilhar Screenshot</string>
     <string name="screenshot_take_failed">Não foi possível tirar screenshots!!</string>
@@ -18,4 +15,8 @@
     <string name="full_page_screenshot">Full Page Screenshot</string>
     <string name="custom_page_screenshot">Custom Page Screenshot</string>
     <string name="hidden_text">Hidden Text</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>

@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                             xmlns:app="http://schemas.android.com/apk/res-auto"
-                                             xmlns:tools="http://schemas.android.com/tools"
-                                             android:layout_width="match_parent"
-                                             android:layout_height="wrap_content">
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/racha_activity">
 
     <EditText
             android:layout_width="0dp"
@@ -28,31 +30,106 @@
             android:id="@+id/swtStatus"
             android:textOn="true"
             android:textOff="false"
-            android:checked="true" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp" app:layout_constraintTop_toTopOf="@+id/edtNJogadores"
-            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="@+id/edtNJogadores"
-            android:layout_marginTop="8dp"/>
+            android:checked="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/edtHorario"
+            android:layout_marginTop="16dp"/>
+
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:id="@+id/edtNJogadores" android:layout_marginTop="8dp"
+            android:id="@+id/edtNJogadores"
+            android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/edtNome"
-            app:layout_constraintEnd_toStartOf="@+id/swtStatus"
-            android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
-            android:textSize="18sp" android:ems="2" android:gravity="center" android:hint="0"
-            android:layout_marginStart="8dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginLeft="8dp"/>
-    <TextView
-            android:text="Número de jogadores por time sem o goleiro"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:hint="Nº jogadores"
+            app:layout_constraintStart_toEndOf="@+id/edtHorario"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp" android:maxLength="2"/>
+
+    <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@android:id/empty"
+            android:inputType="time"
+            android:id="@+id/edtHorario"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/edtNome"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginLeft="8dp" android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent" android:textSize="12sp" android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/edtNJogadores"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp" android:hint="Horário" android:gravity="center" android:maxLength="5"/>
+
+    <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             app:layout_constraintTop_toBottomOf="@+id/edtNJogadores"
-            android:layout_marginEnd="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginRight="8dp"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/swtStatus"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp">
+
+        <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dia(s) da semana?"
+                android:textSize="18sp"/>
+
+        <CheckBox
+                android:id="@+id/cbSegunda"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Segunda"/>
+
+        <CheckBox
+                android:id="@+id/cbTerca"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Terça"/>
+
+        <CheckBox
+                android:id="@+id/cbQuarta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quarta"/>
+
+        <CheckBox
+                android:id="@+id/cbQuinta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quinta"/>
+
+        <CheckBox
+                android:id="@+id/cbSexta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sexta"/>
+
+        <CheckBox
+                android:id="@+id/cbSabado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sábado"/>
+
+        <CheckBox
+                android:id="@+id/cbDomingo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Domingo"/>
+
+    </RadioGroup>
 
 </android.support.constraint.ConstraintLayout>

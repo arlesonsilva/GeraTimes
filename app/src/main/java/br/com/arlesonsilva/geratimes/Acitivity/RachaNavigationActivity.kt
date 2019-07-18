@@ -1,5 +1,7 @@
 package br.com.arlesonsilva.geratimes.Acitivity
 
+import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.app.AlertDialog
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
@@ -26,19 +28,17 @@ class RachaNavigationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_racha_navigation)
 
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setHomeButtonEnabled(true)
+        //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        //supportActionBar!!.setHomeButtonEnabled(true)
 
         idRacha = intent.getIntExtra("idRacha",0)
         selectRachaDB(idRacha)
 
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
         navView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+//        navView.selectedItemId = R.id.navigation_soteio_times
 
-        val f= supportFragmentManager.findFragmentById(R.id.fragment_content)
-        if (f == null) {
-            callFragment(JogadoresFragment())
-        }
+        callFragment(JogadoresFragment())
 
     }
 
@@ -106,13 +106,19 @@ class RachaNavigationActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("CommitTransaction")
     fun callFragment(fragment: Fragment) {
         val bundle = Bundle()
         bundle.putInt("idRacha",idRacha)
         fragment.arguments = bundle
         fm = supportFragmentManager
         ft = fm!!.beginTransaction()
-        ft!!.replace(R.id.fragment_content, fragment)
+        val f= supportFragmentManager.findFragmentById(R.id.fragment_content)
+        if (f == null) {
+            ft!!.add(R.id.fragment_content, fragment)
+        }else {
+            ft!!.replace(R.id.fragment_content, fragment)
+        }
         ft!!.commit()
     }
 
@@ -125,7 +131,9 @@ class RachaNavigationActivity : AppCompatActivity() {
                         cursor.getInt(0),
                         cursor.getString(1),
                         cursor.getString(2)!!.toBoolean(),
-                        cursor.getInt(3)
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5)
                     )
                     title = cursor.getString(1)
                 } while (cursor.moveToNext())

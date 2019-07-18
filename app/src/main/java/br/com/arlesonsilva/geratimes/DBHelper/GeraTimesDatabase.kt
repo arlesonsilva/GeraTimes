@@ -8,7 +8,7 @@ val Context.database: GeraTimesDatabase
     get() = GeraTimesDatabase.getInstance(applicationContext)
 
 
-class GeraTimesDatabase(context: Context) : ManagedSQLiteOpenHelper(ctx = context , name = "geraTimes.db",  version = 1) {
+class GeraTimesDatabase(context: Context) : ManagedSQLiteOpenHelper(ctx = context , name = "geraTimes.db",  version = 2) {
 
     companion object {
         private var instance: GeraTimesDatabase? = null
@@ -27,6 +27,8 @@ class GeraTimesDatabase(context: Context) : ManagedSQLiteOpenHelper(ctx = contex
         db.createTable("tb_racha",true,
             "id" to INTEGER + PRIMARY_KEY + UNIQUE,
             "nome" to TEXT,
+            "horario" to TEXT,
+            "dia_semana" to TEXT,
             "status" to TEXT,
             "jogadores_por_time" to INTEGER
         )
@@ -63,6 +65,10 @@ class GeraTimesDatabase(context: Context) : ManagedSQLiteOpenHelper(ctx = contex
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.dropTable("geraTimes.db", ifExists = true)
+        if (newVersion > oldVersion) {
+            db.execSQL("ALTER TABLE tb_racha ADD COLUMN horario TEXT")
+            db.execSQL("ALTER TABLE tb_racha ADD COLUMN dia_semana TEXT")
+        }
     }
 
 }

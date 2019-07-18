@@ -73,7 +73,7 @@
                 android:layout_marginRight="8dp"/>
         <Switch
                 android:text="Marcar todos como pago"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/switchPagoTodos"
                 app:layout_constraintTop_toTopOf="parent"
@@ -85,7 +85,8 @@
                 android:textOff="false"
                 android:textColor="@android:color/darker_gray"
                 android:visibility="visible"
-                android:checked="false"/>
+                android:checked="false" app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp" android:gravity="right|center_vertical"/>
 
     </android.support.constraint.ConstraintLayout>
 

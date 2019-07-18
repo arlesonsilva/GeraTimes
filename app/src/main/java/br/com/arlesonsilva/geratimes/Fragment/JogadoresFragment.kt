@@ -1,7 +1,6 @@
 package br.com.arlesonsilva.geratimes.Fragment
 
 import android.app.AlertDialog
-import android.content.ContentValues
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -14,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Switch
 import android.widget.TextView
+import br.com.arlesonsilva.geratimes.Acitivity.RachaNavigationActivity
 import br.com.arlesonsilva.geratimes.Adapter.JogadorAdapter
 import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Model.Jogador
@@ -41,7 +41,7 @@ class JogadoresFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        var view = inflater.inflate(R.layout.fragment_jogadores, container, false)
+        val view = inflater.inflate(R.layout.fragment_jogadores, container, false)
 
         txtContador = view.findViewById(R.id.txtContador)
         switch = view.findViewById(R.id.switchPagoTodos)
@@ -97,9 +97,8 @@ class JogadoresFragment : Fragment() {
             false
         }
 
-        switch!!.setOnCheckedChangeListener { buttonView, isChecked ->
+        switch!!.setOnCheckedChangeListener { _, _ ->
             updateTodosPagoDB(switch!!.isChecked)
-            selectJogadorDB()
         }
 
         btnAddJogador!!.setOnClickListener {
@@ -122,28 +121,36 @@ class JogadoresFragment : Fragment() {
         val nome = view.findViewById<EditText>(R.id.edtNome)
         val pago = view.findViewById<Switch>(R.id.swtPago)
         val goleiro = view.findViewById<Switch>(R.id.swtGoleiro)
-        goleiro.onCheckedChange { buttonView, isChecked ->
-            pago.isChecked = goleiro.isChecked
-        }
+
         dialogBuilder.setTitle("Adicionar jogador")
         dialogBuilder.setView(view)
-        dialogBuilder.setPositiveButton("Salvar") { _, _ ->
+        dialogBuilder.setPositiveButton("Salvar",null)
+        dialogBuilder.setNegativeButton("Cancelar", null)
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
+        val positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val cancelButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+
+        goleiro.onCheckedChange { _, _ ->
+            pago.isChecked = goleiro.isChecked
+        }
+
+        positiveButton.setOnClickListener {
             if(nome.text.trim().isEmpty()) {
                 toast("Campo nome obrigatório")
             }else {
                 insertJogadorDB(
                     nome.text.toString(),
                     pago.isChecked,
-                    goleiro.isChecked
+                    goleiro.isChecked,
+                    alertDialog
                 )
-                Log.i("insertJogadorDB",pago.isChecked.toString())
             }
         }
-        dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
-            return@setNegativeButton
+        cancelButton.setOnClickListener {
+            alertDialog.dismiss()
         }
-        val alertDialog = dialogBuilder.create()
-        alertDialog.show()
+
     }
 
     fun dialogEditarJogador(jogador: Jogador) {
@@ -183,7 +190,11 @@ class JogadoresFragment : Fragment() {
         alertDialog.show()
     }
 
-    fun insertJogadorDB(nome: String, pago: Boolean, goleiro: Boolean) {
+    private fun insertJogadorDB(
+        nome: String,
+        pago: Boolean,
+        goleiro: Boolean,
+        alertDialog: AlertDialog) {
         context!!.database.use {
             insert("tb_jogador",
                 "nome" to nome,
@@ -193,10 +204,10 @@ class JogadoresFragment : Fragment() {
             )
         }
         selectJogadorDB()
+        alertDialog.dismiss()
+        toast("Jogador ${nome} inserido com sucesso")
         if (inclusao) {
             dialogAddJogador()
-        }else {
-            toast("Jogador ${nome} inserido com sucesso")
         }
     }
 
@@ -217,18 +228,24 @@ class JogadoresFragment : Fragment() {
             if (cursor.moveToFirst()) {
                 do {
                     val nJogadores = cursor.getInt(0)
-                    val cursor2 = rawQuery("SELECT count(*) FROM tb_jogador WHERE racha_id = ? AND pago = 'true' AND goleiro = 'false'", arrayOf(idRacha.toString()))
-                    if (cursor2.moveToFirst()) {
-                        do {
-                            val nJogadoresPG = cursor2.getInt(0)
-                            if (nJogadores == nJogadoresPG) {
-                                switch!!.isChecked = true
-                            }
-                        } while (cursor2.moveToNext())
-                    }else {
-                        switch!!.isChecked = false
+                    Log.i("verificaTodosPago","${nJogadores}")
+                    if (nJogadores > 0) {
+                        val cursor2 = rawQuery("SELECT count(*) FROM tb_jogador WHERE racha_id = ? AND pago = 'true' AND goleiro = 'false'", arrayOf(idRacha.toString()))
+                        if (cursor2.moveToFirst()) {
+                            do {
+                                val nJogadoresPG = cursor2.getInt(0)
+                                Log.i("verificaTodosPago","${nJogadores} ${nJogadoresPG}")
+                                if (nJogadores == nJogadoresPG) {
+                                    switch!!.isChecked = true
+                                }else if (nJogadores == 0) {
+                                    switch!!.isChecked = false
+                                }
+                            } while (cursor2.moveToNext())
+                        }else {
+                            switch!!.isChecked = false
+                        }
+                        cursor2.close()
                     }
-                    cursor2.close()
                 } while (cursor.moveToNext())
             }
             cursor.close()
@@ -251,13 +268,13 @@ class JogadoresFragment : Fragment() {
     }
 
     fun updateTodosPagoDB(status: Boolean) {
-        Log.i("updateTodosPagoDB","2")
         context!!.database.use {
             update("tb_jogador",
                 "pago" to status.toString())
-                .whereSimple("goleiro != 'true'" )
+                .whereSimple("goleiro != 'true' AND racha_id = ${idRacha}" )
                 .exec()
         }
+        selectJogadorDB()
     }
 
     fun deleteJogadorDB(jogador: Jogador) {

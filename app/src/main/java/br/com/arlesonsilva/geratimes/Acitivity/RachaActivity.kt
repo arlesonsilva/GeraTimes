@@ -2,15 +2,17 @@ package br.com.arlesonsilva.geratimes.Acitivity
 
 import android.Manifest
 import android.app.AlertDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.AlarmClock
 import android.provider.Settings
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -20,8 +22,11 @@ import br.com.arlesonsilva.geratimes.Adapter.RachaAdapter
 import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Model.Racha
 import br.com.arlesonsilva.geratimes.R
-import org.jetbrains.anko.*
 import org.jetbrains.anko.db.*
+import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
+import java.util.*
+import kotlin.collections.ArrayList
 
 class RachaActivity : AppCompatActivity() {
 
@@ -52,7 +57,6 @@ class RachaActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
         selectRachaDB()
         selectInclusaoDB()
     }
@@ -109,17 +113,16 @@ class RachaActivity : AppCompatActivity() {
         AlertDialog.Builder(this@RachaActivity).apply {
             setTitle("Precisa de permissão")
             setMessage("Algumas permissões são necessárias para executar tarefas no app Gera Times.")
-            setPositiveButton("Sim") { d, i ->
+            setPositiveButton("Sim") { _, _ ->
                 // Se o usuário quiser, requere novamente permissão à funcionalidade
                 ActivityCompat.requestPermissions(
                     this@RachaActivity,
                     arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     PERMISSION_RESULT_CODE
                 )
             }
-            setNegativeButton("Não") { d, i -> d.dismiss() }
+            setNegativeButton("Não") { d, _ -> d.dismiss() }
         }.show()
     }
 
@@ -127,7 +130,7 @@ class RachaActivity : AppCompatActivity() {
         AlertDialog.Builder(this).apply {
             setTitle("Precisa de permissão")
             setMessage("Algumas permissões são necessárias para executar tarefas no app Gera Times, é preciso que acesse as configurações do sistema e conceda as permissões necessárias.")
-            setPositiveButton("Ir para as configurações") { d, i ->
+            setPositiveButton("Ir para as configurações") { _, _ ->
                 // Cria intent para a tela de detalhes do app onde é possível o usuário conceder permissão à funcionalidade
                 val appSettings = Intent().apply {
                     action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -135,7 +138,7 @@ class RachaActivity : AppCompatActivity() {
                 }
                 context.startActivity(appSettings)
             }
-            setNegativeButton("Não") { d, i -> d.dismiss() }
+            setNegativeButton("Não") { d, _ -> d.dismiss() }
         }.show()
     }
 
@@ -150,7 +153,9 @@ class RachaActivity : AppCompatActivity() {
                             cursor.getInt(0),
                             cursor.getString(1),
                             cursor.getString(2)!!.toBoolean(),
-                            cursor.getInt(3)
+                            cursor.getInt(3),
+                            cursor.getString(4),
+                            cursor.getString(5)
                         )
                     )
                 } while (cursor.moveToNext())
@@ -171,7 +176,6 @@ class RachaActivity : AppCompatActivity() {
             if (cursor.moveToFirst()) {
                 do {
                     inclusao = cursor.getString(2)!!.toBoolean()
-                    Log.i("selectInclusaoDB",cursor.getString(1) + inclusao)
                 } while (cursor.moveToNext())
             }
         }
@@ -188,19 +192,58 @@ class RachaActivity : AppCompatActivity() {
         }
     }
 
-    private fun insertRachaDB(nome: String, status: Boolean, numero: String) {
+    private fun insertRachaDB(
+        nome: String,
+        horario: String,
+        dSemana: String,
+        status: Boolean,
+        numero: String,
+        alertDialog: AlertDialog) {
         database.use {
             insert("tb_racha",
                 "nome" to nome,
+                "horario" to horario,
+                "dia_semana" to dSemana,
                 "status" to status.toString(),
                 "jogadores_por_time" to numero
             )
         }
+        val str = horario
+        val delimiter = ":"
+        val parts = str.split(delimiter)
+        val hora = parts[0].toInt()
+        val minuto = parts[1].toInt()
+        createAlarm("Alarme racha ${nome}",hora, minuto, dSemana)
         selectRachaDB()
-        if (inclusao) {
-            dialogAddRacha()
-        }else {
+        alertDialog.dismiss()
+        //if (inclusao) {
+            //dialogAddRacha()
+        //}else {
             toast("Racha ${nome} inserido com sucesso")
+        //}
+    }
+
+    private fun createAlarm(message: String, hour: Int, minutes: Int, dSemana: String) {
+        val dias = dSemana
+            .replace("[", "")
+            .replace("]", "")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            val intent= Intent(AlarmClock.ACTION_SET_ALARM)
+                .putExtra(AlarmClock.EXTRA_MESSAGE, message)
+                .putExtra(AlarmClock.EXTRA_HOUR, hour)
+                .putExtra(AlarmClock.EXTRA_MINUTES, minutes)
+                .putExtra(AlarmClock.EXTRA_DAYS, arrayListOf(dias.toInt()))
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(intent)
+            }
+        } else {
+            val intent= Intent(AlarmClock.ACTION_SET_ALARM)
+                .putExtra(AlarmClock.EXTRA_MESSAGE, message)
+                .putExtra(AlarmClock.EXTRA_HOUR, hour)
+                .putExtra(AlarmClock.EXTRA_MINUTES, minutes)
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(intent)
+            }
         }
     }
 
@@ -208,35 +251,118 @@ class RachaActivity : AppCompatActivity() {
         val dialogBuilder = AlertDialog.Builder(this@RachaActivity)
         val inflater = this.layoutInflater
         val view = inflater.inflate(R.layout.add_racha_dialog, null)
-        var nome = view.findViewById<EditText>(R.id.edtNome)
-        var status = view.findViewById<Switch>(R.id.swtStatus)
-        var numero = view.findViewById<EditText>(R.id.edtNJogadores)
+        val nome = view.findViewById<EditText>(R.id.edtNome)
+        val status = view.findViewById<Switch>(R.id.swtStatus)
+        val numero = view.findViewById<EditText>(R.id.edtNJogadores)
+        val horario = view.findViewById<EditText>(R.id.edtHorario)
+        val segunda = view.findViewById<CheckBox>(R.id.cbSegunda)
+        val terca = view.findViewById<CheckBox>(R.id.cbTerca)
+        val quarta = view.findViewById<CheckBox>(R.id.cbQuarta)
+        val quinta = view.findViewById<CheckBox>(R.id.cbQuinta)
+        val sexta = view.findViewById<CheckBox>(R.id.cbSexta)
+        val sabado = view.findViewById<CheckBox>(R.id.cbSabado)
+        val domingo = view.findViewById<CheckBox>(R.id.cbDomingo)
+        val calendar = Calendar.getInstance()
+        val dSemana = ArrayList<String>()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
 
         dialogBuilder.setTitle("Adicionar racha")
         dialogBuilder.setView(view)
+        dialogBuilder.setPositiveButton("Salvar",null)
+        dialogBuilder.setNegativeButton("Cancelar", null)
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
+        val positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val cancelButton = alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE)
 
-        dialogBuilder.setPositiveButton("Salvar") { _, _ ->
-            if(nome.text.trim().isEmpty()) {
-                toast("Campo nome obrigatório")
-            }else if (numero.length() == 0) {
-                toast("Campo número de jogadores obrigatório")
-            }else if (numero.text.toString().toInt() == 0) {
-                toast("Campo número de jogadores deve ser maior que 0")
+        horario.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                val timeSetListener = TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { _, h, m ->
+                    horario.setText("$h:$m")
+                }, hour, minute, true)
+                timeSetListener.show()
+            }
+        }
+        domingo.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                dSemana.add("1")
             }else {
-                insertRachaDB(
+                dSemana.remove("1")
+            }
+        }
+        segunda.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                dSemana.add("2")
+            }else {
+                dSemana.remove("2")
+            }
+        }
+        terca.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                dSemana.add("3")
+            }else {
+                dSemana.remove("3")
+            }
+        }
+        quarta.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                dSemana.add("4")
+            }else {
+                dSemana.remove("4")
+            }
+        }
+        quinta.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                dSemana.add("5")
+            }else {
+                dSemana.remove("5")
+            }
+        }
+        sexta.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                dSemana.add("6")
+            }else {
+                dSemana.remove("6")
+            }
+        }
+        sabado.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                dSemana.add("7")
+            }else {
+                dSemana.remove("7")
+            }
+        }
+
+        positiveButton.setOnClickListener {
+            when {
+                nome.text.isEmpty() -> toast("Campo nome obrigatório")
+                numero.length() == 0 -> toast( "Campo número de jogadores obrigatório")
+                numero.text.toString().toInt() == 0 -> toast("Campo número de jogadores deve ser maior que 0")
+                horario.text.isEmpty() -> toast("Campo horário do racha obrigatório")
+                !segunda.isChecked &&
+                    !terca.isChecked &&
+                    !quarta.isChecked &&
+                    !quinta.isChecked &&
+                    !sexta.isChecked &&
+                    !sabado.isChecked &&
+                    !domingo.isChecked  -> toast("Campo dias da semana do racha obrigatório")
+
+                else -> insertRachaDB(
                     nome.text.toString(),
+                    horario.text.toString(),
+                    dSemana.toList().toString(),
                     status.isChecked,
-                    numero.text.toString()
+                    numero.text.toString(),
+                    alertDialog
                 )
             }
         }
 
-        dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
-            return@setNegativeButton
+        cancelButton.setOnClickListener {
+            alertDialog.dismiss()
         }
 
-        val alertDialog = dialogBuilder.create()
-        alertDialog.show()
     }
 
 }
