@@ -13,7 +13,6 @@ import android.provider.Settings
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -53,6 +52,7 @@ class RachaActivity : AppCompatActivity() {
 
         createTableConfig()
         checkPermissions()
+
     }
 
     override fun onResume() {
@@ -95,6 +95,11 @@ class RachaActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> {
                 startActivity<ConfiguracaoActivity>()
+                true
+            }
+            R.id.action_alarm -> {
+                val intent = Intent(AlarmClock.ACTION_SHOW_ALARMS)
+                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -232,7 +237,8 @@ class RachaActivity : AppCompatActivity() {
                 .putExtra(AlarmClock.EXTRA_MESSAGE, message)
                 .putExtra(AlarmClock.EXTRA_HOUR, hour)
                 .putExtra(AlarmClock.EXTRA_MINUTES, minutes)
-                .putExtra(AlarmClock.EXTRA_DAYS, arrayListOf(dias.toInt()))
+                .putExtra(AlarmClock.EXTRA_DAYS, arrayListOf(1,2))
+                //.putExtra(AlarmClock.EXTRA_DAYS, arrayListOf(dias.toInt()))
             if (intent.resolveActivity(packageManager) != null) {
                 startActivity(intent)
             }

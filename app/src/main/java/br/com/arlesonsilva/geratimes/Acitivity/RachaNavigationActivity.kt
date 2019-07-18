@@ -1,7 +1,6 @@
 package br.com.arlesonsilva.geratimes.Acitivity
 
 import android.annotation.SuppressLint
-import android.app.ActionBar
 import android.app.AlertDialog
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
@@ -16,6 +15,7 @@ import br.com.arlesonsilva.geratimes.Fragment.SorteioFragment
 import br.com.arlesonsilva.geratimes.Model.Racha
 import br.com.arlesonsilva.geratimes.R
 import org.jetbrains.anko.db.update
+import android.content.Intent
 
 class RachaNavigationActivity : AppCompatActivity() {
 

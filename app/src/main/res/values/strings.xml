@@ -8,6 +8,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_compartilhar">Compartilhar</string>
     <string name="action_settings">Configurações</string>
+    <string name="action_alarm">Alarmes</string>
     <string name="sharing_text">Your sharing text goes here…</string>
     <string name="share_title">Compartilhar Screenshot</string>
     <string name="screenshot_take_failed">Não foi possível tirar screenshots!!</string>
