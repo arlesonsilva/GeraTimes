@@ -129,11 +129,11 @@ class RachaNavigationActivity : AppCompatActivity() {
                 do {
                     Racha(
                         cursor.getInt(0),
-                        cursor.getString(1),
-                        cursor.getString(2)!!.toBoolean(),
-                        cursor.getInt(3),
-                        cursor.getString(4),
-                        cursor.getString(5)
+                        cursor.getString(cursor.getColumnIndex("nome")),
+                        cursor.getString(cursor.getColumnIndex("status"))!!.toBoolean(),
+                        cursor.getInt(cursor.getColumnIndex("jogadores_por_time")),
+                        cursor.getString(cursor.getColumnIndex("horario")),
+                        cursor.getString(cursor.getColumnIndex("dia_semana"))
                     )
                     title = cursor.getString(1)
                 } while (cursor.moveToNext())

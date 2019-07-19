@@ -156,11 +156,11 @@ class RachaActivity : AppCompatActivity() {
                     listRacha.add(
                         Racha(
                             cursor.getInt(0),
-                            cursor.getString(1),
-                            cursor.getString(2)!!.toBoolean(),
-                            cursor.getInt(3),
-                            cursor.getString(4),
-                            cursor.getString(5)
+                            cursor.getString(cursor.getColumnIndex("nome")),
+                            cursor.getString(cursor.getColumnIndex("status"))!!.toBoolean(),
+                            cursor.getInt(cursor.getColumnIndex("jogadores_por_time")),
+                            cursor.getString(cursor.getColumnIndex("horario")),
+                            cursor.getString(cursor.getColumnIndex("dia_semana"))
                         )
                     )
                 } while (cursor.moveToNext())
@@ -237,8 +237,7 @@ class RachaActivity : AppCompatActivity() {
                 .putExtra(AlarmClock.EXTRA_MESSAGE, message)
                 .putExtra(AlarmClock.EXTRA_HOUR, hour)
                 .putExtra(AlarmClock.EXTRA_MINUTES, minutes)
-                .putExtra(AlarmClock.EXTRA_DAYS, arrayListOf(1,2))
-                //.putExtra(AlarmClock.EXTRA_DAYS, arrayListOf(dias.toInt()))
+                .putExtra(AlarmClock.EXTRA_DAYS, arrayListOf(dias.toInt()))
             if (intent.resolveActivity(packageManager) != null) {
                 startActivity(intent)
             }
