@@ -1,27 +1,17 @@
 package br.com.arlesonsilva.geratimes.Fragment
 
 import android.app.AlertDialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.Switch
-import android.widget.TextView
-import br.com.arlesonsilva.geratimes.Acitivity.RachaNavigationActivity
+import android.widget.*
 import br.com.arlesonsilva.geratimes.Adapter.JogadorAdapter
 import br.com.arlesonsilva.geratimes.DBHelper.database
 import br.com.arlesonsilva.geratimes.Model.Jogador
 import br.com.arlesonsilva.geratimes.R
-import com.baoyz.swipemenulistview.SwipeMenuCreator
-import com.baoyz.swipemenulistview.SwipeMenuItem
-import com.baoyz.swipemenulistview.SwipeMenuListView
-import org.jetbrains.anko.db.delete
 import org.jetbrains.anko.db.insert
 import org.jetbrains.anko.db.update
 import org.jetbrains.anko.sdk27.coroutines.onCheckedChange
@@ -31,8 +21,8 @@ class JogadoresFragment : Fragment() {
 
     private var txtContador: TextView? = null
     private var switch: Switch? = null
-    private var btnAddJogador: FloatingActionButton? = null
-    private lateinit var listView: SwipeMenuListView
+    private var btnAddJogador: Button? = null
+    private lateinit var listView: ListView //SwipeMenuListView
     private var listJogador = ArrayList<Jogador>()
     private var adapter: JogadorAdapter? = null
     lateinit var empty: TextView
@@ -48,54 +38,9 @@ class JogadoresFragment : Fragment() {
         empty = view.findViewById(android.R.id.empty)
         listView = view.findViewById(R.id.list_jogadores)
         adapter = JogadorAdapter(view.context, listJogador)
-        btnAddJogador = view.findViewById<FloatingActionButton>(R.id.add_jogador)
+        btnAddJogador = view.findViewById(R.id.add_jogador)
         listView.adapter = adapter
         idRacha = arguments!!.getInt("idRacha")
-
-        val creator = SwipeMenuCreator { menu ->
-            val editItem = SwipeMenuItem(
-                view.context
-            )
-            editItem.background = ColorDrawable(
-                Color.rgb(
-                    0xC9,
-                    0xC9,
-                    0xCE
-                )
-            )
-            editItem.width = 150
-            editItem.setIcon(R.drawable.ic_mode_edit_black_24dp)
-            menu.addMenuItem(editItem)
-
-            val deleteItem = SwipeMenuItem(
-                view.context
-            )
-            deleteItem.background = ColorDrawable(
-                Color.rgb(
-                    0xF9,
-                    0x3F,
-                    0x25
-                )
-            )
-            deleteItem.width = 150
-            deleteItem.setIcon(R.drawable.ic_delete_black_24dp)
-            menu.addMenuItem(deleteItem)
-        }
-
-        listView.setMenuCreator(creator)
-
-        listView.setOnMenuItemClickListener { position, menu, index ->
-            val jogador = listJogador[position]
-            when (index) {
-                0 -> {
-                    dialogEditarJogador(jogador)
-                }
-                1 -> {
-                    deleteJogadorDB(jogador)
-                }
-            }
-            false
-        }
 
         switch!!.setOnCheckedChangeListener { _, _ ->
             updateTodosPagoDB(switch!!.isChecked)
@@ -147,47 +92,11 @@ class JogadoresFragment : Fragment() {
                 )
             }
         }
+
         cancelButton.setOnClickListener {
             alertDialog.dismiss()
         }
 
-    }
-
-    fun dialogEditarJogador(jogador: Jogador) {
-        val dialogBuilder = AlertDialog.Builder(context)
-        val inflater = this.layoutInflater
-        val view = inflater.inflate(R.layout.add_jogador_dialog, null)
-        val nome = view.findViewById<EditText>(R.id.edtNome)
-        val pago = view.findViewById<Switch>(R.id.swtPago)
-        val goleiro = view.findViewById<Switch>(R.id.swtGoleiro)
-        nome.setText(jogador.nome)
-        pago.isChecked = jogador.pago
-        goleiro.isChecked = jogador.goleiro
-        goleiro.onCheckedChange { buttonView, isChecked ->
-            pago.isChecked = goleiro.isChecked
-        }
-        dialogBuilder.setTitle("Editar jogador")
-        dialogBuilder.setView(view)
-        dialogBuilder.setPositiveButton("Salvar") { _, _ ->
-            if(nome.text.trim().isEmpty()) {
-                toast("Campo nome obrigatório")
-            }else {
-                val jogador =
-                    Jogador(
-                        jogador.id,
-                        nome.text.toString(),
-                        goleiro.isChecked,
-                        pago.isChecked,
-                        idRacha
-                )
-                updateJogadorDB(jogador)
-            }
-        }
-        dialogBuilder.setNegativeButton("Cancelar") { _, _ ->
-            return@setNegativeButton
-        }
-        val alertDialog = dialogBuilder.create()
-        alertDialog.show()
     }
 
     private fun insertJogadorDB(
@@ -252,21 +161,6 @@ class JogadoresFragment : Fragment() {
         }
     }
 
-    fun updateJogadorDB(jogador: Jogador) {
-        context!!.database.use {
-            update("tb_jogador",
-                "nome" to jogador.nome,
-                "goleiro" to jogador.goleiro.toString(),
-                "pago" to jogador.pago.toString(),
-                "racha_id" to jogador.racha_id)
-                .whereSimple("id = ?", jogador.id.toString())
-                .exec()
-        }
-
-        toast("Jogador ${jogador.nome} editado com sucesso")
-        selectJogadorDB()
-    }
-
     fun updateTodosPagoDB(status: Boolean) {
         context!!.database.use {
             update("tb_jogador",
@@ -274,14 +168,6 @@ class JogadoresFragment : Fragment() {
                 .whereSimple("goleiro != 'true' AND racha_id = ${idRacha}" )
                 .exec()
         }
-        selectJogadorDB()
-    }
-
-    fun deleteJogadorDB(jogador: Jogador) {
-        context!!.database.use {
-            delete("tb_jogador", "id = {id}", "id" to jogador.id)
-        }
-        toast("Jogador ${jogador.nome} excluído com sucesso")
         selectJogadorDB()
     }
 

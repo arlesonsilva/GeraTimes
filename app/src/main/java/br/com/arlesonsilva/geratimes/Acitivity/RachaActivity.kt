@@ -29,7 +29,7 @@ import kotlin.collections.ArrayList
 
 class RachaActivity : AppCompatActivity() {
 
-    private var btnAddRacha: FloatingActionButton? = null
+    private var btnAddRacha: Button? = null
     private lateinit var listView: ListView
     private var listRacha = ArrayList<Racha>()
     private var adapter: RachaAdapter? = null
@@ -42,7 +42,7 @@ class RachaActivity : AppCompatActivity() {
         setContentView(R.layout.activity_racha)
 
         empty = findViewById(android.R.id.empty)
-        btnAddRacha = findViewById<FloatingActionButton>(R.id.add_racha)
+        btnAddRacha = findViewById(R.id.add_racha)
         listView = findViewById(R.id.list_rachas)
         adapter = RachaAdapter(this@RachaActivity, listRacha)
 
